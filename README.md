@@ -8,15 +8,16 @@
     * Create a C++ project with SDK v30
     * Tools > SDK Manager > SDK Tools
 * Install your equivalent of `jdk11-openjdk` and `adb`
-* Create an android emulator?
+* Start the app in Android Studio (`adb devices` should list an emulator)
 * In Makefile:
     * Uncomment some TARGETS
 ```
 git clone --recursive https://github.com/vatrolin/rawdrawandroid.git
 # git submodule update --init --recursive
 make keystore
-make clean all
-adb -e install rawdrawandroidexample.apk
+make manifest
+make clean push
+# adb -e install rawdrawandroidexample.apk
 ```
 
 
