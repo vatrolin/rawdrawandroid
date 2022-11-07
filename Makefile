@@ -7,7 +7,7 @@ all : makecapk.apk
 
 # WARNING WARNING WARNING!  YOU ABSOLUTELY MUST OVERRIDE THE PROJECT NAME
 # you should also override these parameters, get your own signatre file and make your own manifest.
-APPNAME?=cnfgtest
+APPNAME?=rawdrawandroidexample
 LABEL?=$(APPNAME)
 APKFILE ?= $(APPNAME).apk
 PACKAGENAME?=org.yourorg.$(APPNAME)
@@ -92,15 +92,15 @@ CC_x86_64=$(NDK)/toolchains/llvm/prebuilt/$(OS_NAME)/bin/x86_64-linux-android$(A
 AAPT:=$(BUILD_TOOLS)/aapt
 
 # Which binaries to build? Just comment/uncomment these lines:
-TARGETS += makecapk/lib/arm64-v8a/lib$(APPNAME).so
-TARGETS += makecapk/lib/armeabi-v7a/lib$(APPNAME).so
+#TARGETS += makecapk/lib/arm64-v8a/lib$(APPNAME).so
+#TARGETS += makecapk/lib/armeabi-v7a/lib$(APPNAME).so
 #TARGETS += makecapk/lib/x86/lib$(APPNAME).so
-#TARGETS += makecapk/lib/x86_64/lib$(APPNAME).so
+TARGETS += makecapk/lib/x86_64/lib$(APPNAME).so
 
 CFLAGS_ARM64:=-m64
 CFLAGS_ARM32:=-mfloat-abi=softfp -m32
 CFLAGS_x86:=-march=i686 -mtune=intel -mssse3 -mfpmath=sse -m32
-CFLAGS_x86_64:=-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=intel
+CFLAGS_x86_64:=-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64
 STOREPASS?=password
 DNAME:="CN=example.com, OU=ID, O=Example, L=Doe, S=John, C=GB"
 KEYSTOREFILE:=my-release-key.keystore
@@ -131,7 +131,7 @@ makecapk/lib/x86/lib$(APPNAME).so : $(ANDROIDSRCS)
 
 makecapk/lib/x86_64/lib$(APPNAME).so : $(ANDROIDSRCS)
 	mkdir -p makecapk/lib/x86_64
-	$(CC_x86) $(CFLAGS) $(CFLAGS_x86_64) -o $@ $^ -L$(NDK)/toolchains/llvm/prebuilt/$(OS_NAME)/sysroot/usr/lib/x86_64-linux-android/$(ANDROIDVERSION) $(LDFLAGS)
+	$(CC_x86_64) $(CFLAGS) $(CFLAGS_x86_64) -o $@ $^ -L$(NDK)/toolchains/llvm/prebuilt/$(OS_NAME)/sysroot/usr/lib/x86_64-linux-android/$(ANDROIDVERSION) $(LDFLAGS)
 
 #We're really cutting corners.  You should probably use resource files.. Replace android:label="@string/app_name" and add a resource file.
 #Then do this -S Sources/res on the aapt line.

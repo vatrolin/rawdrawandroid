@@ -1,3 +1,22 @@
+## fixes
+* fixed x86-64 compile
+
+## usage
+
+* Install Android Studio
+* Install the NDK
+* Install your equivalent of `jdk11-openjdk` and `adb`
+* In Makefile:
+ * Uncomment some TARGETS
+```
+git clone --recursive https://github.com/vatrolin/rawdrawandroid.git
+# git submodule update --init --recursive
+make keystore
+make clean all
+```
+
+
+
 [![rawdrawandroid](https://github.com/dreua/rawdrawandroid/actions/workflows/install.yml/badge.svg)](https://github.com/dreua/rawdrawandroid/actions/workflows/install.yml)
 
 # rawdrawandroid
