@@ -3,3 +3,4 @@ makecapk/
 cnfgtest.apk
 AndroidManifest.xml
 *.apk
+*.apk.idsig
