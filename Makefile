@@ -138,12 +138,6 @@ makecapk/lib/x86_64/lib$(APPNAME).so : $(ANDROIDSRCS)
 #For icon support, add -S makecapk/res to the aapt line.  also,  android:icon="@mipmap/icon" to your application line in the manifest.
 #If you want to strip out about 800 bytes of data you can remove the icon and strings.
 
-#Notes for the past:  These lines used to work, but don't seem to anymore.  Switched to newer jarsigner.
-#(zipalign -c -v 8 makecapk.apk)||true #This seems to not work well.
-#jarsigner -verify -verbose -certs makecapk.apk
-
-
-
 makecapk.apk : $(TARGETS) $(EXTRA_ASSETS_TRIGGER) AndroidManifest.xml
 	mkdir -p makecapk/assets
 	cp -r Sources/assets/* makecapk/assets
