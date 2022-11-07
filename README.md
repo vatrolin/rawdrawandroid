@@ -3,6 +3,11 @@
 
 ## usage
 
+```
+git clone --recursive https://github.com/vatrolin/rawdrawandroid.git
+# git submodule update --init --recursive
+```
+
 * Install the NDK
     * Install Android Studio
     * Create a C++ project with SDK v30
@@ -12,8 +17,6 @@
 * In Makefile:
     * Uncomment some TARGETS
 ```
-git clone --recursive https://github.com/vatrolin/rawdrawandroid.git
-# git submodule update --init --recursive
 make keystore
 make manifest
 make clean push
