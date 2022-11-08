@@ -9,10 +9,12 @@ from subprocess import run as _run
 # glue
 def run(command: str, check = True, **kwargs):
     _run(split_command(command), check, **kwargs)
+def sh(command: str, check = True, **kwargs):
+    run(f"sh -c \"{command}\"")
 
 def rimraf(*paths: str):
     for path in paths:
-        run(f"rm -rf {path}")
+        sh(f"rm -rf \"{path}\"")
 
 def path(format: str):
     return glob(expanduser(format))[0]
@@ -23,7 +25,7 @@ OS_NAME = _os_name()
 
 # android tools
 ANDROID_VERSION = 30
-APPNAME = "rawdrawandroid"
+APPNAME = "rawdrawandroidexample"
 def _android_sdk_paths():
     ANDROID_SDK_PATH = path("~/Android/Sdk")
     ANDROID_NDK_PATH = path(f"{ANDROID_SDK_PATH}/ndk/23*")
@@ -94,14 +96,27 @@ def paths():
     print(f"ANDROID_SDK_TOOLS_PATH: {repr(ANDROID_SDK_TOOLS_PATH)}")
     print(f"ANDROID_NDK_PATH: {repr(ANDROID_NDK_PATH)}")
     print(f"ANDROID_NDK_TOOLS_PATH: {repr(ANDROID_NDK_TOOLS_PATH)}")
+
 def build():
     format_template("AndroidManifest.xml", TEMPLATE)
-    rimraf("*.apk", "*.apk.idsig", "makecapk/**.so", "makecapk/*")
+    rimraf("bin/*")
+    # make an .apk
+    run(f"{ANDROID_SDK_TOOLS_PATH}/aapt package -f -F bin/temp1.apk -I {ANDROID_SDK_PATH}/platforms/android-{ANDROID_VERSION}/android.jar -M AndroidManifest.xml -S Sources/res -A Sources/assets -v --target-sdk-version {ANDROID_VERSION}")
+    # add c++
+    run("unzip -o bin/temp1.apk -d bin/temp1")
     for architecture in TARGETS:
-        run_clang(architecture, f"test.c android_native_app_glue.c", f"makecapk/lib/{architecture}/{APPNAME}.so")
-    run("cp -r Sources/assets/* makecapk/assets")
-    run(f"{ANDROID_SDK_TOOLS_PATH}/aapt package -f -F temp.apk -I {ANDROID_SDK_PATH}/platforms/android-{ANDROID_VERSION}/android.jar -M AndroidManifest.xml -S Sources/res -A makecapk/assets -v --target-sdk-version {ANDROID_VERSION}")
-    # $(AAPT) package -f -F temp.apk -I $(ANDROIDSDK)/platforms/android-$(ANDROIDVERSION)/android.jar -M AndroidManifest.xml -S Sources/res -A makecapk/assets -v --target-sdk-version $(ANDROIDTARGET)
+        run(f"mkdir -p bin/temp1/lib/{architecture}")
+        run_clang(architecture, f"test.c android_native_app_glue.c", f"bin/temp1/lib/{architecture}/lib{APPNAME}.so")
+    run("sh -c \"cd bin/temp1 && zip -D9r ../temp2.apk .\"")
+    run("sh -c \"cd bin/temp1 && zip -D0r ../temp2.apk ./resources.arsc ./AndroidManifest.xml\"")
+    # sign the .apk
+    KEYSTOREFILE = "my-release-key.keystore"
+    STOREPASS = "password"
+    ALIASNAME = "standkey"
+    run(f"jarsigner -sigalg SHA1withRSA -digestalg SHA1 -verbose -keystore {KEYSTOREFILE} -storepass {STOREPASS} bin/temp2.apk {ALIASNAME}")
+    # double sign the .apk (for version 30+)
+    run(f"{ANDROID_SDK_TOOLS_PATH}/zipalign -v 4 bin/temp2.apk bin/{APPNAME}.apk")
+    run(f"{ANDROID_SDK_TOOLS_PATH}/apksigner sign --key-pass pass:{STOREPASS} --ks-pass pass:{STOREPASS} --ks {KEYSTOREFILE} bin/{APPNAME}.apk")
 
 if __name__ == "__main__":
     args = argv[1:]
