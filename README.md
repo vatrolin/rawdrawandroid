@@ -13,7 +13,7 @@ git clone --recursive https://github.com/vatrolin/rawdrawandroid.git
     * Create a C++ project with SDK v30
     * Tools > SDK Manager > SDK Tools
 * Install your equivalent of `jdk11-openjdk` and `adb`
-* Start the app in Android Studio (`adb devices` should list an emulator)
+* Start an app in Android Studio (`adb devices` should list an emulator)
 * In Makefile:
     * Uncomment some TARGETS
 ```
