@@ -33,7 +33,6 @@ def _android_sdk_paths():
     ANDROID_NDK_TOOLS_PATH = path(f"{ANDROID_NDK_PATH}/toolchains/llvm/prebuilt/{OS_NAME}-x86_64")
     return [ANDROID_SDK_PATH, ANDROID_NDK_PATH, ANDROID_SDK_TOOLS_PATH, ANDROID_NDK_TOOLS_PATH]
 [ANDROID_SDK_PATH, ANDROID_NDK_PATH, ANDROID_SDK_TOOLS_PATH, ANDROID_NDK_TOOLS_PATH] = _android_sdk_paths()
-AAPT_PATH = path(f"{ANDROID_SDK_TOOLS_PATH}/aapt")
 
 # clang
 def clang_path(architecture: str):

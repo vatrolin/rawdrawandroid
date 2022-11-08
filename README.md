@@ -22,6 +22,11 @@ make manifest
 make clean push
 # adb -e install rawdrawandroidexample.apk
 ```
+or
+```
+make keystore
+python make.py
+```
 
 
 
