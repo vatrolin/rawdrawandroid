@@ -97,9 +97,12 @@ def paths():
     print(f"ANDROID_NDK_PATH: {repr(ANDROID_NDK_PATH)}")
     print(f"ANDROID_NDK_TOOLS_PATH: {repr(ANDROID_NDK_TOOLS_PATH)}")
 
-def build():
-    format_template("AndroidManifest.xml", TEMPLATE)
+def clean():
     rimraf("bin/*")
+
+def build():
+    clean()
+    format_template("AndroidManifest.xml", TEMPLATE)
     # make an .apk
     run(f"{ANDROID_SDK_TOOLS_PATH}/aapt package -f -F bin/temp1.apk -I {ANDROID_SDK_PATH}/platforms/android-{ANDROID_VERSION}/android.jar -M AndroidManifest.xml -S Sources/res -A Sources/assets -v --target-sdk-version {ANDROID_VERSION}")
     # add c++
@@ -118,11 +121,20 @@ def build():
     run(f"{ANDROID_SDK_TOOLS_PATH}/zipalign -v 4 bin/temp2.apk bin/{APPNAME}.apk")
     run(f"{ANDROID_SDK_TOOLS_PATH}/apksigner sign --key-pass pass:{STOREPASS} --ks-pass pass:{STOREPASS} --ks {KEYSTOREFILE} bin/{APPNAME}.apk")
 
+def push():
+    run("adb -e install bin/rawdrawandroidexample.apk")
+
 if __name__ == "__main__":
     args = argv[1:]
-    if len(args) == 0: args.append("build")
+    if len(args) == 0:
+        args.append("build")
+        args.append("push")
     for arg in args:
         if arg == "paths":
             paths()
+        elif arg == "clean":
+            clean()
         elif arg == "build":
             build()
+        elif arg == "push":
+            push()
