@@ -111,8 +111,8 @@ def build():
     for architecture in TARGETS:
         run(f"mkdir -p bin/temp1/lib/{architecture}")
         run_clang(architecture, f"test.c android_native_app_glue.c", f"bin/temp1/lib/{architecture}/lib{APPNAME}.so")
-    run("sh -c \"cd bin/temp1 && zip -D9r ../temp2.apk .\"")
-    run("sh -c \"cd bin/temp1 && zip -D0r ../temp2.apk ./resources.arsc ./AndroidManifest.xml\"")
+    sh("cd bin/temp1 && zip -D9r ../temp2.apk .")
+    sh("cd bin/temp1 && zip -D0r ../temp2.apk ./resources.arsc ./AndroidManifest.xml")
     # sign the .apk
     KEYSTOREFILE = "my-release-key.keystore"
     STOREPASS = "password"
