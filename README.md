@@ -19,6 +19,7 @@ git clone --recursive https://github.com/vatrolin/rawdrawandroid.git
 ```
 make keystore
 make manifest
+make folders
 make clean push
 # adb -e install rawdrawandroidexample.apk
 ```
