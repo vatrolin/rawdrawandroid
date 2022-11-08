@@ -58,11 +58,18 @@ def clang_args(architecture: str):
         "x86_64": "x86_64",
     }[architecture]
     arch_args += f" -L{ANDROID_NDK_PATH}/sysroot/usr/lib/{architecture2}-{OS_NAME}-android/{ANDROID_VERSION}"
+    arch_args += {
+        "arm64-v8a": " -m64",
+        "armeabi-v7a": " -mfloat-abi=softfp -m32",
+        "x86": " -march=i686 -mtune=intel -mssse3 -mfpmath=sse -m32",
+        "x86_64": " -march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64",
+    }[architecture]
     return f"{_CLANG_ARGS} {_LD_ARGS} {arch_args}"
 def run_clang(architecture: str, input: str, output: str):
     print(f"{clang_path(architecture)} {clang_args(architecture)} {input} -o {output}")
     run(f"{clang_path(architecture)} {clang_args(architecture)} {input} -o {output}")
 
+# app settings
 TEMPLATE = {
     "APPNAME": APPNAME,
     "LABEL": "Rawdraw Android",
@@ -76,13 +83,8 @@ TARGETS = [
     #"x86",
     "x86_64"
 ]
-_TARGET_FLAGS = {
-    "arm64-v8a": "-m64",
-    "armeabi-v7a": "-mfloat-abi=softfp -m32",
-    "x86": "-march=i686 -mtune=intel -mssse3 -mfpmath=sse -m32",
-    "x86_64": "-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=x86-64",
-}
 
+# make args
 def format_template(filepath: str, values: dict):
     def _format_template(match):
         return str(values[match[1]])
